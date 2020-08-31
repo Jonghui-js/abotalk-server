@@ -124,11 +124,6 @@ exports.login = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Public
 exports.logout = asyncHandler(async (req, res, next) => {
-  res.cookie('token', 'none', {
-    expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: true,
-  });
-
   res.status(200).json({
     success: true,
     data: {},
@@ -269,9 +264,12 @@ const sendTokenResponse = (user, statusCode, res) => {
   if (process.env.NODE_ENV === 'production') {
     options.secure = true;
   }
-
-  res.status(statusCode).cookie('token', token, options).json({
+  res.status(statusCode).json({
     success: true,
     token,
+
+    /*  res.status(statusCode).cookie('token', token, options).json({
+    success: true,
+    token, */
   });
 };

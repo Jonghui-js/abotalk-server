@@ -30,6 +30,7 @@ router
   .route('/:id/photo')
   .put(protect, authorize('publisher', 'admin'), bootcampPhotoUpload);
 
+  
 router
   .route('/')
   .get(advancedResults(Bootcamp, 'courses'), getBootcamps)

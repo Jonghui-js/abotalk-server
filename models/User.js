@@ -19,6 +19,10 @@ const UserSchema = new mongoose.Schema({
       'Please add a valid email',
     ],
   },
+  img: {
+    type: String,
+    default: 'assets/images/avatar.jpeg',
+  },
   blood: {
     type: String,
     enum: ['a', 'b', 'ab', 'o'],
@@ -29,6 +33,10 @@ const UserSchema = new mongoose.Schema({
     required: [true, 'Please add a password'],
     minlength: 8,
     select: false,
+  },
+  role: {
+    type: String,
+    default: 'user',
   },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
@@ -51,13 +59,6 @@ const UserSchema = new mongoose.Schema({
 
 UserSchema.virtual('posts', {
   ref: 'Post',
-  localField: '_id',
-  foreignField: 'user',
-  justOne: false,
-});
-
-UserSchema.virtual('polls', {
-  ref: 'Poll',
   localField: '_id',
   foreignField: 'user',
   justOne: false,

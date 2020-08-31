@@ -15,11 +15,11 @@ const router = express.Router();
 
 const { protect } = require('../middleware/auth');
 
-router.post('/register', register);
-router.post('/login', login);
-router.get('/logout', logout);
-router.get('/me', protect, getMe);
-router.get('/confirmemail', confirmEmail);
+router.post('/register', register); //완료
+router.post('/login', login); //완료
+router.get('/logout', logout); //완료
+router.get('/me', protect, getMe); //완료
+router.get('/confirmemail', confirmEmail); //완료
 router.put('/updatedetails', protect, updateDetails);
 router.put('/updatepassword', protect, updatePassword);
 router.post('/forgotpassword', forgotPassword);

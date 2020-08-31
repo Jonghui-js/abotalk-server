@@ -1,26 +1,35 @@
 const mongoose = require('mongoose');
 
-//POST
 const PostSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: [true, 'Please add a name'],
-      maxlength: [50, 'Name can not be more than 50 characters'],
-    },
-    content: {
-      type: String,
-      required: [true, 'Please add a description'],
-      maxlength: [500, 'Description can not be more than 500 characters'],
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
       required: true,
+    },
+    username: {
+      type: String,
+      ref: 'User',
+      required: true,
+    },
+    usertype: {
+      type: String,
+      ref: 'User',
+      required: true,
+    },
+    title: {
+      type: String,
+      required: [true, '제목을 작성해주세요'],
+      maxlength: [50, 'Name can not be more than 50 characters'],
+    },
+    content: {
+      type: String,
+      required: [true, '내용을 작성해주세요'],
+      maxlength: [1000, 'Name can not be more than 1000 characters'],
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
     },
     comments: [
       {
