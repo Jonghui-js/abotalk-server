@@ -5,19 +5,29 @@ const User = require('../models/User');
 
 exports.getPosts = asyncHandler(async (req, res, next) => {
   const posts = await Post.find().sort({ createdAt: -1 });
-  console.log(posts);
   res.status(200).json(posts);
+});
+
+// @desc      Get single bootcamp
+// @route     GET /api/v1/posts/:id
+// @access    Public
+exports.getPost = asyncHandler(async (req, res, next) => {
+  const post = await Post.findById(req.params.id);
+
+  if (!post) {
+    return next(
+      new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)
+    );
+  }
+
+  res.status(200).json(post);
 });
 
 // @desc      Create new bootcamp
 // @route     POST /api/v1/bootcamps
 // @access    Private
 exports.createPost = asyncHandler(async (req, res, next) => {
-  //console.log(req.body.id);
   const userInfo = req.user;
-
-  // const userInfo = await User.findById(req.body.id);
-  console.log(userInfo);
   const usertype = userInfo.blood;
   const username = userInfo.username;
   req.body.user = req.user.id;
@@ -64,11 +74,40 @@ exports.updatePost = asyncHandler(async (req, res, next) => {
 });
 
 exports.getMyPosts = asyncHandler(async (req, res, next) => {
-  let posts = await Post.find({ user: req.user.id });
+  let posts = await Post.find({ user: req.user.id }).sort({ createdAt: -1 });
 
   console.log(posts);
 
   res.status(200).json(posts);
+});
+
+exports.getMyComments = asyncHandler(async (req, res, next) => {
+  const array = [];
+  const mycomments = await Post.find(
+    {
+      comments: { $elemMatch: { user: req.user.id } },
+    },
+    {
+      comments: {
+        $elemMatch: { user: req.user.id },
+      },
+      'comments.text': true,
+      'comments.username': true,
+      'comments.usertype': true,
+      'comments.date': true,
+    }
+  ).sort({
+    date: -1,
+  });
+
+  //console.log(mycomments);
+
+  for (let i = 0; i < mycomments.length; i++) {
+    array.push(...mycomments[i]['comments']);
+    array[i].id = mycomments[i]['_id'];
+  }
+  console.log(array);
+  res.status(200).json(array);
 });
 
 exports.deletePost = asyncHandler(async (req, res, next) => {
@@ -92,4 +131,41 @@ exports.deletePost = asyncHandler(async (req, res, next) => {
   await post.remove();
 
   res.status(200).json({ success: true });
+});
+
+//comments/:id
+
+exports.createComment = asyncHandler(async (req, res, next) => {
+  const userInfo = req.user;
+  const usertype = userInfo.blood;
+  const username = userInfo.username;
+  req.body.user = req.user.id;
+  const { text, user } = req.body;
+
+  const newComment = {
+    text,
+    user,
+    usertype,
+    username,
+  };
+
+  const post = await Post.findById(req.params.id);
+
+  if (!post) {
+    return next(
+      new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)
+    );
+  }
+
+  post.comments.unshift(newComment);
+  await post.save();
+  res.status(200).json(post.comments);
+});
+
+exports.getComments = asyncHandler(async (req, res, next) => {
+  const post = await Post.findById(req.params.id);
+  const comments = post.comments;
+
+  console.log(comments);
+  res.status(200).json(comments);
 });

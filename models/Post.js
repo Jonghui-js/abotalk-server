@@ -41,6 +41,16 @@ const PostSchema = new mongoose.Schema(
           type: String,
           required: true,
         },
+        username: {
+          type: String,
+          ref: 'User',
+          required: true,
+        },
+        usertype: {
+          type: String,
+          ref: 'User',
+          required: true,
+        },
         date: {
           type: Date,
           default: Date.now,
